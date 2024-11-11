@@ -1,0 +1,20 @@
+@startuml
+
+!include <C4/C4_Context.puml>
+
+Person(User, "Пользователь")
+System_Ext(WebApp, "Веб-приложение")
+System(SmartHomeApp, "Приложение")
+Boundary(UserHome, "Дом пользователя") {
+    System_Ext(Heater, "Отопитель")
+    System_Ext(TemperatureSensor, "Датчик температуры")
+}
+Person(SupportEngineer, "Специалист поддержки")
+Rel(User, WebApp, "Управляет домом через")
+Rel(WebApp, SmartHomeApp, "Направляет запросы в")
+Rel(SmartHomeApp, TemperatureSensor, "Опрашивает состояние")
+Rel(SmartHomeApp, Heater, "Управляет")
+Rel(SupportEngineer, UserHome, "Настраивает оборудование в")
+Rel(SupportEngineer, SmartHomeApp, "Регистрирует пользователя, дом, датчик и отопитель через")
+
+@enduml
