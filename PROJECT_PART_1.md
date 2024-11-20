@@ -91,3 +91,24 @@
 
 ![C4_Component_To-Be/VideoSurveillance](./diagrams/C4_Component_To-Be/VideoSurveillance.png)
 
+## 3. Разработка ER-диаграммы
+
+### 3.1. Идентификация сущностей
+
+* Пользователь - User
+* Дом - House
+* Устройство - Device
+* Тип устройства - DeviceType
+* Отопительное устройство - Heater
+* Осветительное устройство - Lighter
+* Устройство контроля доступа - AccessControlComponent
+* Устройство видеонаблюдения - VideoSurveillanceSystem
+* Телеметрия - TelemetryData
+* Модуль (логики) - Module
+
+### 3.2 ER-диаграмма (отражены основные атрибуты и связи)
+
+[Ссылка на диаграмму в PlantUML](./diagrams/ER_To-Be.puml)
+
+![ER_To-Be](./diagrams/ER_To-Be.png)
+
