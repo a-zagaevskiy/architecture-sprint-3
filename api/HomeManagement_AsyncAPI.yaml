@@ -1,0 +1,66 @@
+asyncapi: '3.0.0'
+info:
+  title: HomeManagement Async API
+  version: '1.0.0'
+  description: This service is in charge of managing the home's devices
+
+servers:
+  production:
+    protocol: kafka
+    host: kafka-broker
+
+channels:
+  devices-updates:
+    address: /home/{homeId}/devices
+    messages:
+      DeviceUpdate:
+        $ref: '#/components/messages/DeviceUpdate'
+
+operations:
+  sendDeviceUpdate:
+    action: send
+    channel:
+      $ref: '#/channels/devices-updates'
+    messages:
+      - $ref: '#/channels/devices-updates/messages/DeviceUpdate'
+
+components:
+  messages:
+    DeviceUpdate:
+      title: Device update
+      payload:
+        $ref: '#/components/schemas/DeviceUpdate'
+
+  schemas:
+    DeviceUpdate:
+        type: object
+        properties:
+          operation:
+            description: The operation type
+            type: string
+            example: added
+            enum:
+              - added
+              - removed
+          device:
+            $ref: '#/components/schemas/Device'
+    Device:
+      type: object
+      properties:
+        id:
+          description: The ID of the device
+          type: string
+          example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+        type_id:
+          description: The type of the device
+          type: string
+          example: Heater
+          enum:
+            - Heater
+            - Lighter
+            - AccessControlComponent
+            - VideoSurveillance
+        endpoint:
+          description: The endpoint of the device
+          type: string
+          example: http://some_device_endpoint:8080

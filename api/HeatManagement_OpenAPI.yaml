@@ -1,0 +1,97 @@
+openapi: '3.0.0'
+info:
+  title: HeatManagement API
+  version: '1.0.0'
+paths:
+  /heating/{id}:
+    get:
+      summary: Get a heating system information by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatingSystem'
+        '403':
+          description: Forbidden
+        '404':
+          description: Heating system not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    patch:
+      summary: Update a heating system by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeatingSystem'
+      responses:
+        '200': 
+          description: Heating system updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HeatingSystem'
+        '403':
+          description: Forbidden
+        '404':
+          description: Heating system not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+components:
+  schemas:
+    HeatingSystem:
+      description: Information about a heating system
+      type: object
+      properties:
+        id:
+          description: The ID of the heating system
+          type: integer
+          format: int64
+          example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+        enabled:
+          description: Whether the heating system is enabled
+          type: boolean
+          example: true
+        targetTemperature:
+          description: Target temperature
+          type: number
+          example: 25
+        currentTemperature:
+          description: Current temperature
+          type: number
+          example: 21
+    internalError:
+      description: Internal server error
+      type: object
+      properties:
+        message:
+          description: The error message
+          type: string
+          example: Internal server error
+        code:
+          description: The error code
+          type: integer
+          example: 500

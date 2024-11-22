@@ -1,0 +1,114 @@
+asyncapi: '3.0.0'
+info:
+  title: HeatManagement Async API
+  version: '1.0.0'
+  description: This service is in charge of managing heat in the house
+servers:
+  production:
+    protocol: kafka
+    host: kafka-broker
+channels:
+  devices-updates:
+    address: /home/{homeId}/devices
+    messages:
+      DeviceUpdate:
+        description: Device update
+        $ref: '#/components/messages/DeviceUpdate'
+  heating:
+    address: /home/{homeId}/heating
+    messages:
+      turnHeatingOn:
+        description: Turn the heating on
+        $ref: '#/components/messages/TurnOn'
+      turnHeatingOff:
+        description: Turn the heating off
+        $ref: '#/components/messages/TurnOff'
+      currentTemperature:
+        description: Current temperature
+        $ref: '#/components/messages/CurrentTemperature'
+operations:
+  receiveDeviceUpdate:
+    action: receive
+    channel:
+      $ref: '#/channels/devices-updates'
+    messages:
+      - $ref: '#/channels/devices-updates/messages/DeviceUpdate'
+  receiveHeatingControl:
+    action: receive
+    channel:
+      $ref: '#/channels/heating'
+    messages:
+      - $ref: '#/channels/heating/messages/turnHeatingOn'
+      - $ref: '#/channels/heating/messages/turnHeatingOff'
+  sendHeatingInfo:
+    action: send
+    channel:
+      $ref: '#/channels/heating'
+    messages:
+      - $ref: '#/channels/heating/messages/currentTemperature'
+components:
+  messages:
+    DeviceUpdate:
+      title: Device update
+      payload:
+        $ref: '#/components/schemas/DeviceUpdate'
+    TurnOn:
+      title: Turn the heating on
+      payload:
+        type: object
+        properties:
+          id:
+            type: string
+            example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+    TurnOff:
+      title: Turn the heating off
+      payload:
+        type: object
+        properties:
+          id:
+            type: string
+            example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+    CurrentTemperature:
+      title: Current temperature
+      payload:
+        type: object
+        properties:
+          id:
+            type: string
+            example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+          temperature:
+            type: number
+            example: 36.6
+  schemas:
+    DeviceUpdate:
+        type: object
+        properties:
+          operation:
+            description: The operation type
+            type: string
+            example: added
+            enum:
+              - added
+              - removed
+          device:
+            $ref: '#/components/schemas/Device'
+    Device:
+      type: object
+      properties:
+        id:
+          description: The ID of the device
+          type: string
+          example: b2b01253-42c7-4ffb-b6ed-4df6442aa3ef
+        type_id:
+          description: The type of the device
+          type: string
+          example: Heater
+          enum:
+            - Heater
+            - Lighter
+            - AccessControlComponent
+            - VideoSurveillance
+        endpoint:
+          description: The endpoint of the device
+          type: string
+          example: http://some_device_endpoint:8080
