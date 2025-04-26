@@ -1,0 +1,98 @@
+@startchen
+
+entity User {
+    id <<key>>
+    login
+}
+
+entity House {
+    id <<key>>
+    user_id <<derived>>
+    location
+}
+
+entity DeviceType {
+    id <<key>>
+}
+
+entity Device {
+    id <<key>>
+    type_id <<domain::DeviceType>>
+    house_id <<derived>>
+}
+
+entity Heater {
+    id <<key>>
+    device_id <<derived>>
+    telemetry_id <<multi>>
+    endpoint
+    enabled
+    target_temperature
+} 
+
+entity Lighter {
+    id <<key>>
+    device_id <<derived>>
+    telemetry_id <<multi>>
+    endpoint
+    enabled
+}
+
+entity AccessControlComponent {
+    id <<key>>
+    device_id <<derived>>
+    telemetry_id <<multi>>
+    endpoint
+    closed
+}
+
+entity VideoSurveillanceSystem {
+    id <<key>>
+    device_id <<derived>>
+    telemetry_id <<multi>>
+    endpoint
+    enabled
+    video_channels
+}
+
+entity TelemetryData {
+    id <<key>>
+    device_id <<derived>>
+    timestamp
+    value
+}
+
+entity Module {
+    id <<key>>
+    enabled
+    schedule
+    Trigger <<multi>> {
+        telemetry_id <<derived>>
+        condition
+    }
+    Control <<multi>> {
+        device_id <<derived>>
+        command
+    }
+}
+
+User -(1,N)- House
+House -(1,N)- Device
+DeviceType -(1,1)- Device
+TelemetryData -(N,1)- Device
+Device -(1,1)- Heater
+TelemetryData -(N,1)- Heater
+
+Device -(1,1)- Lighter
+TelemetryData -(N,1)- Lighter
+
+Device -(1,1)- AccessControlComponent
+TelemetryData -(N,1)- AccessControlComponent
+
+Device -(1,1)- VideoSurveillanceSystem
+TelemetryData -(N,1)- VideoSurveillanceSystem
+
+Module -(N,N)- TelemetryData
+Module -(N,N)- Device
+
+@endchen

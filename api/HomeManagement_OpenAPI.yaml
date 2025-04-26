@@ -1,0 +1,335 @@
+openapi: '3.0.0'
+info:
+  title: HomeManagement API
+  version: '1.0.0'
+paths:
+  /homes:
+    get:
+      summary: Get all homes
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/home'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    post:
+      summary: Create a new home
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/home'
+      responses:
+        '201':
+          description: Home created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: The ID of the created home
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+  /homes/{homeId}:
+    get:
+      summary: Get a home by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/home'
+        '403':
+          description: Forbidden
+        '404':
+          description: Home not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    patch:
+      summary: Update a home by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/home'
+      responses:
+        '200':
+          description: Home updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/home'
+        '403':
+          description: Forbidden
+        '404':
+          description: Home not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    delete:
+      summary: Delete a home by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Home deleted successfully
+        '403':
+          description: Forbidden
+        '404':
+          description: Home not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+  /homes/{homeId}/devices:
+    get:
+      summary: Get all devices for a home by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/device'
+        '403':
+          description: Forbidden
+        '404':
+          description: Home not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    post:
+      summary: Create a new device for a home by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/device'
+      responses:
+        '201':
+          description: Device created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/device'
+        '403':
+          description: Forbidden
+        '404':
+          description: Home not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+  /homes/{homeId}/devices/{deviceId}:
+    get:
+      summary: Get a device by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Device found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/device'
+        '403':
+          description: Forbidden
+        '404':
+          description: Device not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    patch:
+      summary: Update a device by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/device'
+      responses:
+        '200':
+          description: Device updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/device'
+        '403':
+          description: Forbidden
+        '404':
+          description: Device not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+    delete:
+      summary: Delete a device by ID
+      parameters:
+        - name: homeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Device deleted successfully
+        '403':
+          description: Forbidden
+        '404':
+          description: Device not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internalError'
+components:
+  schemas:
+    home:
+      description: A home
+      type: object
+      properties:
+        name:
+          description: The name of the home
+          type: string
+          example: My Home
+        location:
+          description: The location of the home
+          type: object
+          properties:
+            latitude:
+              description: The latitude of the home
+              type: number
+              example: 55.7558
+            longitude:
+              description: The longitude of the home
+              type: number
+              example: 37.6173
+    deviceType:
+      description: The type of the device
+      type: string
+      enum:
+        - Heater
+        - Lighter
+        - AccessControlComponent
+        - VideoSurveillance
+      example: Heater
+    device:
+      description: A device
+      type: object
+      properties:
+        name:
+          description: The name of the device
+          type: string
+          example: My Device
+        type:
+          $ref: '#/components/schemas/deviceType'
+          example: Heater
+        endpoint:
+          description: The endpoint of the device
+          type: string
+          example: http://some_device_endpoint:8080
+    internalError:
+      type: object
+      properties:
+        message:
+          description: The error message
+          type: string
+          example: Internal server error
+        code:
+          description: The error code
+          type: integer
+          example: 500

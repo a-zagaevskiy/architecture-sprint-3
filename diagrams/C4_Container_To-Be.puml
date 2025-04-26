@@ -1,0 +1,93 @@
+@startuml
+
+!include <C4/C4_Container.puml>
+
+LAYOUT_LEFT_RIGHT()
+
+Person(User, "Пользователь")
+System_Ext(WebApp, "Веб-приложение")
+
+System_Boundary(SmartHomeSystem, "Система управления домом") {
+    Container(ApiGateway, "API-gateway")
+    Container(EventBus, "Шина событий")
+
+    Container(AuthenticationService, "Сервис аутентификации")
+    ContainerDb(UsersDB, "База данных пользователей")
+
+    Container(UserProfileManagement, "Микросервис управления профилем пользователя")
+    ContainerDb(UserProfilesDB, "База данных профилей пользователей")
+
+    Container(HomeManagement, "Микросервис управления домом")
+    ContainerDb(HomesDB, "База данных домов")
+
+    Container(LogicManagement, "Микросервис управления логикой")
+    ContainerDb(LogicDB, "База данных логики")
+
+    Container(HeatManagement, "Микросервис управления отоплением")
+    ContainerDb(HeatersDB, "База данных отопительного оборудования")
+    
+    Container(LightManagement, "Микросервис управления освещением")
+    ContainerDb(LightsDB, "База данных осветительного оборудования")
+
+    Container(AccessControlManagement, "Микросервис управления контролем доступа")
+    ContainerDb(AccessControlDB, "База данных устройств контроля доступа")
+
+    Container(VideoSurveillance, "Микросервис видеонаблюдения")
+    ContainerDb(VideoSurveillanceDB, "База данных систем видеонаблюдения")
+
+}
+
+Boundary(UserHome, "Дом пользователя") {
+    System_Ext(Heater, "Отопительное оборудование")
+    System_Ext(Lighter, "Осветительное оборудование")
+    System_Ext(AccessControlComponents, "Компоненты контроля доступа")
+    System_Ext(VideoSurveillanceSystem, "Система видеонаблюдения")
+}
+
+Rel(User, WebApp, "Управляет домом через")
+Rel(WebApp, ApiGateway, "Направляет запросы в")
+
+Rel(ApiGateway, AuthenticationService, "Аутентификует пользователя в")
+Rel(ApiGateway, UserProfileManagement, "Направляет запросы на управление пользователями в")
+Rel(ApiGateway, HomeManagement, "Направляет запросы на управление домами в")
+Rel(ApiGateway, LogicManagement, "Направляет запросы на управление логикой в")
+Rel(ApiGateway, HeatManagement, "Направляет запросы на управление отоплением в")
+Rel(ApiGateway, LightManagement, "Направляет запросы на управление освещением в")
+Rel(ApiGateway, AccessControlManagement, "Направляет запросы на управление контролем доступа в")
+Rel(ApiGateway, VideoSurveillance, "Направляет запросы на доступ к видеонаблюдению в")
+
+Rel_L(AuthenticationService, UsersDB, "Чтение/запись")
+
+Rel_L(UserProfileManagement, UserProfilesDB, "Чтение/запись")
+
+Rel_L(HomeManagement, HomesDB, "Чтение/запись")
+Rel(HomeManagement, EventBus, "Публикует события об изменении устройств")
+
+Rel_Back(LogicManagement, EventBus, "Подписывается на события о состоянии устройств")
+Rel_L(LogicManagement, LogicDB, "Чтение/запись")
+Rel(LogicManagement, EventBus, "Публикует события об управлении отоплением, освещением, контролем доступа и видеонаблюдением")
+
+Rel_Back(HeatManagement, EventBus, "Подписывается на события об управлении отоплением")
+Rel_L(HeatManagement, HeatersDB, "Чтение/запись")
+Rel(HeatManagement, Heater, "Управляет отоплением")
+Rel(HeatManagement, EventBus, "Публикует информацию о температуре в")
+
+Rel_Back(LightManagement, EventBus, "Подписывается на события об управлении освещением")
+Rel_L(LightManagement, LightsDB, "Чтение/запись")
+Rel(LightManagement, Lighter, "Управляет освещением")
+Rel(LightManagement, EventBus, "Публикует информацию об освещенности")
+
+Rel_Back(AccessControlManagement, EventBus, "Подписывается на события об управлении контролем доступа")
+Rel_L(AccessControlManagement, AccessControlDB, "Чтение/запись")
+Rel(AccessControlManagement, AccessControlComponents, "Управляет контролем доступа")
+Rel(AccessControlManagement, EventBus, "Публикует информацию о статусе контроллеров доступа")
+
+Rel_Back(VideoSurveillance, EventBus, "Подписывается на события об управлении видеонаблюдением")
+Rel_L(VideoSurveillance, VideoSurveillanceDB, "Чтение/запись")
+Rel(VideoSurveillance, VideoServelenceSystem, "Подключается к системе видеонаблюдения")
+Rel(VideoSurveillance, EventBus, "Публикует информацию о событиях системы видеонаблюдения")
+
+
+Lay_D(EventBus, UserHome)
+
+@enduml

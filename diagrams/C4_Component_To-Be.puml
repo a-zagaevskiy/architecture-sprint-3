@@ -1,0 +1,52 @@
+@startuml HomeManagement
+
+!include <C4/C4_Component.puml>
+
+Container(ApiGateway, "API-gateway", "kusk")
+Container_Boundary(HomeManagement, "Микросервис управления домом") {
+    Component(API, "API")
+    Component(HomeManagementLogic, "Логика управления домами")
+    Component(DatabaseController, "Контроллер базы данных")
+    Component(EventBusController, "Контроллер шины событий")
+    Rel(API, HomeManagementLogic, "Использует")
+    Rel(HomeManagementLogic, DatabaseController, "Использует")
+    Rel(HomeManagementLogic, EventBusController, "Использует")
+}
+Container(HomesDB, "База данных домов", "postgres")
+Container(EventBus, "Шина событий", "kafka")
+
+Rel(ApiGateway, API, "Использует", "HTTP")
+Rel(DatabaseController, HomesDB, "Чтение/запись")
+Rel(EventBusController, EventBus, "Отправка событий в")
+
+@enduml
+
+@startuml VideoSurveillance
+
+!include <C4/C4_Component.puml>
+
+Container(ApiGateway, "API-gateway", "kusk")
+Container_Boundary(VideoSurveillance, "Микросервис видеонаблюдения") {
+    Component(API, "API")
+    Component(Logic, "Логика сервиса")
+    Component(DatabaseController, "Контроллер базы данных")
+    Component(EventBusController, "Контроллер шины событий")
+    Component(EventBusListener, "Слушатель шины событий")
+    Component(VideoServelenceController, "Контроллер видеонаблюдения")
+    Rel(API, Logic, "Использует")
+    Rel(Logic, DatabaseController, "Использует")
+    Rel(Logic, EventBusController, "Использует")
+    Rel(Logic, EventBusListener, "Использует")
+    Rel(Logic, VideoServelenceController, "Использует")
+}
+Container(VideoSurveillanceDB, "База данных систем видеонаблюдения", "postgres")
+Container(EventBus, "Шина событий", "kafka")
+System_Ext(VideoServelenceSystem, "Система видеонаблюдения")
+
+Rel(ApiGateway, API, "Использует", "HTTP")
+Rel(DatabaseController, VideoSurveillanceDB, "Чтение/запись")
+Rel(EventBusController, EventBus, "Отправка сообщений о состоянии видеонаблюдения")
+Rel_Back(EventBusListener, EventBus, "Подписывается на события об изменении конфигурации видеонаблюдения")
+Rel(VideoServelenceController, VideoServelenceSystem, "Подключается к системе видеонаблюдения")
+
+@enduml
